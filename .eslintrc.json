@@ -133,6 +133,9 @@
     ],
     "sonarjs/no-inverted-boolean-check": [
       "error"
-    ]
+    ],
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "class-methods-use-this": 0,
+    "import/prefer-default-export": 0,
   }
 }
