@@ -136,6 +136,7 @@
     ],
     "@typescript-eslint/no-non-null-assertion": 0,
     "class-methods-use-this": 0,
-    "import/prefer-default-export": 0
+    "import/prefer-default-export": 0,
+    "no-restricted-syntax": 0
   }
 }
