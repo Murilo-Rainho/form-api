@@ -4,9 +4,11 @@ import {
   MissingParamError,
 } from '../../../../src/presentation/errors';
 
+const signUpFactory = () => new SignUpController();
+
 describe('Signup Controller', () => {
   it('Should return 400 if no name is provided', () => {
-    const signupController = new SignUpController();
+    const signupController = signUpFactory();
 
     const httpRequest = {
       body: {
@@ -23,7 +25,7 @@ describe('Signup Controller', () => {
   });
 
   it('Should return 400 if no email is provided', () => {
-    const signupController = new SignUpController();
+    const signupController = signUpFactory();
 
     const httpRequest = {
       body: {
@@ -40,7 +42,7 @@ describe('Signup Controller', () => {
   });
 
   it('Should return 400 if no password is provided', () => {
-    const signupController = new SignUpController();
+    const signupController = signUpFactory();
 
     const httpRequest = {
       body: {
@@ -57,7 +59,7 @@ describe('Signup Controller', () => {
   });
 
   it('Should return 400 if no password confirmation is provided', () => {
-    const signupController = new SignUpController();
+    const signupController = signUpFactory();
 
     const httpRequest = {
       body: {
