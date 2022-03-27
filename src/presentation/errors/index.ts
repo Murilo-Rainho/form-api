@@ -1,5 +1,7 @@
-import { MissingParamError } from './Missing-param-error';
+import { MissingParamError } from './MissingParamError';
+import { InvalidParamError } from './InvalidParamError';
 
 export {
   MissingParamError,
+  InvalidParamError,
 };
