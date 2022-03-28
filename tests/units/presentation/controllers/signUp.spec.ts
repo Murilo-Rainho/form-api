@@ -3,6 +3,7 @@ import { SignUpController } from '../../../../src/presentation/controllers';
 import {
   MissingParamError,
   InvalidParamError,
+  ServerError,
 } from '../../../../src/presentation/errors';
 
 import { EmailValidator } from '../../../../src/presentation/protocols';
@@ -136,5 +137,31 @@ describe('Signup Controller', () => {
     signUpController.handle(httpRequest);
 
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
+  });
+
+  it('Should return 500 if has an internal error', () => {
+    class EmailValidatorStubInternalError implements EmailValidator {
+      isValid(email: string): boolean {
+        // In all tests, the email will be valid
+        throw new Error('Any internal error');
+      }
+    }
+  
+    const emailValidatorStub = new EmailValidatorStubInternalError();
+    const signUpController = new SignUpController(emailValidatorStub);
+
+    const httpRequest = {
+      body: {
+        email: 'my_invalid_email@email.com',
+        name: 'My Name',
+        password: 'super_password',
+        passwordConfirmation: 'super_password',
+      },
+    };
+
+    const httpResponse = signUpController.handle(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 });
