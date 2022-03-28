@@ -1,5 +1,6 @@
-import { badRequest } from './http-helper';
+import { badRequest, internalError } from './http-helper';
 
 export {
   badRequest,
+  internalError,
 };
