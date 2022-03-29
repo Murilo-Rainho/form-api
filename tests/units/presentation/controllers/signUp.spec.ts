@@ -15,30 +15,18 @@ class EmailValidatorStub implements EmailValidator {
   }
 }
 
-class EmailValidatorStubInternalError implements EmailValidator {
-  isValid(email: string): boolean {
-    throw new Error('Any internal error');
-  }
-}
-
 interface FactoriesTypes {
   signUpController: SignUpController;
-  signUpControllerWithInternalErrorOfEmailValidator: SignUpController;
   emailValidatorStub: EmailValidator;
 }
 
 const factories = (): FactoriesTypes => {
   const emailValidatorStub = new EmailValidatorStub();
 
-  const emailValidatorStubInternalError = new EmailValidatorStubInternalError();
-
   const signUpController = new SignUpController(emailValidatorStub);
-
-  const signUpControllerWithInternalErrorOfEmailValidator = new SignUpController(emailValidatorStubInternalError);
 
   return {
     signUpController,
-    signUpControllerWithInternalErrorOfEmailValidator,
     emailValidatorStub,
   };
 };
@@ -153,9 +141,9 @@ describe('Signup Controller', () => {
   });
 
   it('Should return 500 if has an internal error', () => {
-    const {
-      signUpControllerWithInternalErrorOfEmailValidator,
-    } = factories();
+    const { signUpController, emailValidatorStub } = factories();
+
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => { throw new Error('Any internal error') });
 
     const httpRequest = {
       body: {
@@ -166,7 +154,7 @@ describe('Signup Controller', () => {
       },
     };
 
-    const httpResponse = signUpControllerWithInternalErrorOfEmailValidator.handle(httpRequest);
+    const httpResponse = signUpController.handle(httpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
