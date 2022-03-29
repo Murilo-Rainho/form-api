@@ -1,12 +1,14 @@
-import { SignUpController } from '../../../../src/presentation/controllers';
+import { UserResponseData } from '../../../../src/domain/models';
+import { CreateUser, UserRequestData } from '../../../../src/domain/usecases';
 
+import { SignUpController } from '../../../../src/presentation/controllers';
+import { EmailValidator } from '../../../../src/presentation/protocols';
 import {
   MissingParamError,
   InvalidParamError,
   ServerError,
 } from '../../../../src/presentation/errors';
 
-import { EmailValidator } from '../../../../src/presentation/protocols';
 
 class EmailValidatorStub implements EmailValidator {
   isValid(email: string): boolean {
@@ -15,18 +17,35 @@ class EmailValidatorStub implements EmailValidator {
   }
 }
 
+class CreateUserStub implements CreateUser {
+  createOne(userRequestData: UserRequestData): UserResponseData {
+    const fakeUserResponseData = {
+      id: 'my_valid_id',
+      name: 'My Valid Name',
+      email: 'my_valid_email@email.com',
+      password: 'my_valid_password',
+    };
+
+    return fakeUserResponseData;
+  }
+}
+
 interface FactoriesTypes {
   signUpController: SignUpController;
   emailValidatorStub: EmailValidator;
+  createUserStub: CreateUser;
 }
 
 const factories = (): FactoriesTypes => {
   const emailValidatorStub = new EmailValidatorStub();
 
-  const signUpController = new SignUpController(emailValidatorStub);
+  const createUserStub = new CreateUserStub();
+
+  const signUpController = new SignUpController(emailValidatorStub, createUserStub);
 
   return {
     signUpController,
+    createUserStub,
     emailValidatorStub,
   };
 };
@@ -176,5 +195,28 @@ describe('Signup Controller', () => {
 
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should call addAccount with correct values', () => {
+    const { signUpController, createUserStub } = factories();
+
+    jest.spyOn(createUserStub, 'createOne')
+
+    const httpRequest = {
+      body: {
+        email: 'my_valid_email@email.com',
+        name: 'My Name',
+        password: 'my_valid_password',
+        passwordConfirmation: 'my_valid_password',
+      },
+    };
+
+    signUpController.handle(httpRequest);
+
+    expect(createUserStub.createOne).toHaveBeenCalledWith({
+      email: 'my_valid_email@email.com',
+      name: 'My Name',
+      password: 'my_valid_password',
+    });
   });
 });
