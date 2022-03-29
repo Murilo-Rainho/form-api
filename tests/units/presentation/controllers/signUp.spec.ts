@@ -177,10 +177,30 @@ describe('Signup Controller', () => {
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
   });
 
-  it('Should return 500 if has an internal error', () => {
+  it('Should return 500 if has an internal error in \'emailValidator\'', () => {
     const { signUpController, emailValidatorStub } = factories();
 
     jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => { throw new Error('Any internal error') });
+
+    const httpRequest = {
+      body: {
+        email: 'my_invalid_email@email.com',
+        name: 'My Name',
+        password: 'super_password',
+        passwordConfirmation: 'super_password',
+      },
+    };
+
+    const httpResponse = signUpController.handle(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should return 500 if has an internal error in \'createUser\'', () => {
+    const { signUpController, createUserStub } = factories();
+
+    jest.spyOn(createUserStub, 'createOne').mockImplementationOnce(() => { throw new Error('Any internal error') });
 
     const httpRequest = {
       body: {
