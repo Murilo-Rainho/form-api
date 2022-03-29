@@ -200,7 +200,9 @@ describe('Signup Controller', () => {
   it('Should return 500 if has an internal error in \'createUser\'', async () => {
     const { signUpController, createUserStub } = factories();
 
-    jest.spyOn(createUserStub, 'createOne').mockImplementationOnce(() => { throw new Error('Any internal error') });
+    jest.spyOn(createUserStub, 'createOne').mockImplementationOnce(async () => {
+      return new Promise((_resolve, reject) => reject(new Error('Any internal error')));
+    });
 
     const httpRequest = {
       body: {
