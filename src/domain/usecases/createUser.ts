@@ -7,5 +7,5 @@ export interface UserRequestData {
 }
 
 export interface CreateUser {
-  createOne(userRequestData: UserRequestData): UserResponseData;
+  createOne(userRequestData: UserRequestData): Promise<UserResponseData>;
 }

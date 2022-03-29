@@ -18,7 +18,7 @@ export class SignUpController implements Controller {
     this.createUser = createUser;
   }
 
-  handle(httpRequest: HttpRequest): HttpResponse {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const requiredFields = ['email', 'name', 'password', 'passwordConfirmation'];
 
@@ -38,7 +38,7 @@ export class SignUpController implements Controller {
 
       const userRequestData: UserRequestData = { name, email, password };
 
-      const dataUser = this.createUser.createOne(userRequestData);
+      const dataUser = await this.createUser.createOne(userRequestData);
 
       return successRequest(dataUser);
     } catch (error) {
