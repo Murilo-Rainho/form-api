@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "test:staged": "jest --passWithNoTests",
-    "lint": "eslint ./src --ext .ts"
+    "lint": "eslint src/** --fix"
   },
   "keywords": [],
   "author": "",
