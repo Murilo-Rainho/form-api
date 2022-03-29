@@ -11,3 +11,8 @@ export const internalError = (): HttpResponse => ({
   statusCode: 500,
   body: new ServerError(),
 });
+
+export const successRequest = (data: any): HttpResponse => ({
+  statusCode: 200,
+  body: data,
+});

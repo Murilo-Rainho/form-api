@@ -2,7 +2,7 @@ import { Controller, HttpRequest, HttpResponse } from '../../protocols';
 
 import { InvalidParamError, MissingParamError } from '../../errors';
 
-import { badRequest, internalError } from '../../helpers';
+import { badRequest, internalError, successRequest } from '../../helpers';
 
 import { CreateUser, UserRequestData } from '../../../domain/usecases';
 
@@ -23,9 +23,7 @@ export class SignUpController implements Controller {
       const requiredFields = ['email', 'name', 'password', 'passwordConfirmation'];
 
       for (const field of requiredFields) {
-        if (!httpRequest.body[field]) {
-          return badRequest(new MissingParamError(field));
-        }
+        if (!httpRequest.body[field]) return badRequest(new MissingParamError(field));
       }
 
       const { name, email, password, passwordConfirmation } = httpRequest.body;
@@ -40,7 +38,9 @@ export class SignUpController implements Controller {
 
       const userRequestData: UserRequestData = { name, email, password };
 
-      this.createUser.createOne(userRequestData);
+      const dataUser = this.createUser.createOne(userRequestData);
+
+      return successRequest(dataUser);
     } catch (error) {
       return internalError();
     }
