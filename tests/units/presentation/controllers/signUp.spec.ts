@@ -8,24 +8,37 @@ import {
 
 import { EmailValidator } from '../../../../src/presentation/protocols';
 
+class EmailValidatorStub implements EmailValidator {
+  isValid(email: string): boolean {
+    // In all tests, the email will be valid
+    return true;
+  }
+}
+
+class EmailValidatorStubInternalError implements EmailValidator {
+  isValid(email: string): boolean {
+    throw new Error('Any internal error');
+  }
+}
+
 interface FactoriesTypes {
   signUpController: SignUpController;
+  signUpControllerWithInternalErrorOfEmailValidator: SignUpController;
   emailValidatorStub: EmailValidator;
 }
 
 const factories = (): FactoriesTypes => {
-  class EmailValidatorStub implements EmailValidator {
-    isValid(email: string): boolean {
-      // In all tests, the email will be valid
-      return true;
-    }
-  }
-
   const emailValidatorStub = new EmailValidatorStub();
+
+  const emailValidatorStubInternalError = new EmailValidatorStubInternalError();
+
   const signUpController = new SignUpController(emailValidatorStub);
+
+  const signUpControllerWithInternalErrorOfEmailValidator = new SignUpController(emailValidatorStubInternalError);
 
   return {
     signUpController,
+    signUpControllerWithInternalErrorOfEmailValidator,
     emailValidatorStub,
   };
 };
@@ -140,15 +153,9 @@ describe('Signup Controller', () => {
   });
 
   it('Should return 500 if has an internal error', () => {
-    class EmailValidatorStubInternalError implements EmailValidator {
-      isValid(email: string): boolean {
-        // In all tests, the email will be valid
-        throw new Error('Any internal error');
-      }
-    }
-  
-    const emailValidatorStub = new EmailValidatorStubInternalError();
-    const signUpController = new SignUpController(emailValidatorStub);
+    const {
+      signUpControllerWithInternalErrorOfEmailValidator,
+    } = factories();
 
     const httpRequest = {
       body: {
@@ -159,7 +166,7 @@ describe('Signup Controller', () => {
       },
     };
 
-    const httpResponse = signUpController.handle(httpRequest);
+    const httpResponse = signUpControllerWithInternalErrorOfEmailValidator.handle(httpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
