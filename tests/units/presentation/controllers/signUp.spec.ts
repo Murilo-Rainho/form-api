@@ -1,8 +1,8 @@
 import { UserResponseData } from '../../../../src/domain/models';
 import { CreateUser, UserRequestData } from '../../../../src/domain/usecases';
 
-import { SignUpController } from '../../../../src/presentation/controllers';
-import { EmailValidator } from '../../../../src/presentation/protocols';
+import { EmailValidator } from '../../../../src/presentation/controllers/signUp/signUpProtocols';
+import { SignUpController } from '../../../../src/presentation/controllers/signUp'
 import {
   MissingParamError,
   InvalidParamError,
