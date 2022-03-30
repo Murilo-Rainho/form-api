@@ -4,7 +4,7 @@ import { InvalidParamError, MissingParamError } from '../../errors';
 
 import { badRequest, internalError, successRequest } from '../../helpers';
 
-import { CreateUser, UserRequestData } from '../../../domain/usecases';
+import { CreateUser } from '../../../domain/usecases';
 
 import { EmailValidator } from './signUpProtocols';
 
@@ -36,9 +36,7 @@ export class SignUpController implements Controller {
 
       if (!isValid) return badRequest(new InvalidParamError('email'));
 
-      const userRequestData: UserRequestData = { name, email, password };
-
-      const dataUser = await this.createUser.createOne(userRequestData);
+      const dataUser = await this.createUser.createOne({ name, email, password });
 
       return successRequest(dataUser);
     } catch (error) {
