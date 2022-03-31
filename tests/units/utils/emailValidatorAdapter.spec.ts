@@ -10,7 +10,11 @@ jest.mock('validator', () => ({
   }
 }));
 
-const factories = () => {
+interface FactoriesTypes {
+  emailValidatorAdapter: EmailValidatorAdapter;
+}
+
+const factories = (): FactoriesTypes => {
   const emailValidatorAdapter = new EmailValidatorAdapter();
 
   return {
