@@ -1,4 +1,14 @@
+import validator from 'validator';
+
 import { EmailValidatorAdapter } from '../../../src/utils';
+
+// it is not our task to test an external library, because of that,
+// we will mock the return of it.
+jest.mock('validator', () => ({
+  isEmail(): boolean {
+    return true;
+  }
+}));
 
 const factories = () => {
   const emailValidatorAdapter = new EmailValidatorAdapter();
@@ -12,7 +22,9 @@ describe('EmailValidatorAdapter', () => {
   test('Should return false if validator return false', () => {
     const { emailValidatorAdapter } = factories();
 
-    const isValid = emailValidatorAdapter.isValid('invalid_email');
+    jest.spyOn(validator, 'isEmail').mockReturnValueOnce(false);
+
+    const isValid = emailValidatorAdapter.isValid('invalid_email@email.com');
 
     expect(isValid).toBe(false);
   });
