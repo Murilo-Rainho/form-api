@@ -1,5 +1,7 @@
 import validator from 'validator';
 
+import { EmailValidator } from '../../../src/presentation/controllers/signUp/signUpProtocols';
+
 import { EmailValidatorAdapter } from '../../../src/utils';
 
 // it is not our task to test an external library, because of that,
@@ -11,7 +13,7 @@ jest.mock('validator', () => ({
 }));
 
 interface FactoriesTypes {
-  emailValidatorAdapter: EmailValidatorAdapter;
+  emailValidatorAdapter: EmailValidator;
 }
 
 const factories = (): FactoriesTypes => {
