@@ -1,8 +1,4 @@
-import { UserResponseData } from '../../../domain/models';
-
-import { CreateUser, UserRequestData } from '../../../domain/usecases';
-
-import { Encrypter } from './protocols';
+import { UserResponseData, CreateUser, UserRequestData, Encrypter } from './dbCreateUserProtocols';
 
 export class DbCreateUser implements CreateUser {
   private readonly encrypter: Encrypter;
