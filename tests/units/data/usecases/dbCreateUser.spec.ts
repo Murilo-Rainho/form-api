@@ -38,4 +38,19 @@ describe('database createUser usecase', () => {
 
     expect(encryptSpy).toHaveBeenCalledWith('any_password');
   });
+
+  test('Should throw if encrypter throws', async () => {
+    const { dbCreateUser, encrypterStub } = factories();
+
+    jest.spyOn(encrypterStub, 'encrypt')
+      .mockReturnValueOnce(new Promise((_resolve, reject) => reject(new Error('any_error'))));
+
+    const promise = dbCreateUser.createOne({
+      email: 'any_email@email.com',
+      name: 'My Any Name',
+      password: 'any_password',
+    });
+
+    await expect(promise).rejects.toThrow(new Error('any_error'));
+  });
 });
