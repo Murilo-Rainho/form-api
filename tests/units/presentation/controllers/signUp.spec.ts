@@ -11,14 +11,14 @@ import {
 
 
 class EmailValidatorStub implements EmailValidator {
-  isValid(email: string): boolean {
+  isValid(_email: string): boolean {
     // In all tests, the email will be valid
     return true;
   }
 }
 
 class CreateUserStub implements CreateUser {
-  async createOne(userRequestData: UserRequestData): Promise<UserResponseData> {
+  async createOne(_userRequestData: UserRequestData): Promise<UserResponseData> {
     const fakeUserResponseData = {
       id: 'my_valid_id',
       name: 'My Valid Name',
