@@ -1,19 +1,34 @@
-import { UserResponseData, CreateUser, UserRequestData, Encrypter } from './dbCreateUserProtocols';
+import {
+  UserResponseData,
+  CreateUser,
+  UserRequestData,
+  Encrypter,
+  CreateUserRepository,
+} from './dbCreateUserProtocols';
 
 export class DbCreateUser implements CreateUser {
   private readonly encrypter: Encrypter;
 
-  constructor(encrypter: Encrypter) {
+  private readonly dbCreateUserRepository: CreateUserRepository;
+
+  constructor(encrypter: Encrypter, dbCreateUserRepository: CreateUserRepository) {
     this.encrypter = encrypter;
+
+    this.dbCreateUserRepository = dbCreateUserRepository;
   }
 
   async createOne(userRequestData: UserRequestData): Promise<UserResponseData> {
-    await this.encrypter.encrypt(userRequestData.password);
+    const { name, password, email } = userRequestData;
 
-    const createdUser: UserResponseData = {
-      id: 'any_id',
-      ...userRequestData,
+    const hashedPassword = await this.encrypter.encrypt(password);
+
+    const userData: UserRequestData = {
+      name,
+      email,
+      password: hashedPassword,
     };
+
+    const createdUser = await this.dbCreateUserRepository.createOne(userData);
 
     return new Promise((resolve) => resolve(createdUser));
   }
