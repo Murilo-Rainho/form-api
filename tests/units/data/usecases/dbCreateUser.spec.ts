@@ -1,6 +1,8 @@
+import { CreateUserRepository } from '../../../../src/data/protocols';
 import { DbCreateUser } from '../../../../src/data/usecases/dbCreateUser';
 
-import { CreateUser } from '../../../../src/domain/usecases';
+import { UserResponseData } from '../../../../src/domain/models';
+import { CreateUser, UserRequestData } from '../../../../src/domain/usecases';
 
 class EncrypterStub {
   async encrypt(_password: string): Promise<string> {
@@ -8,19 +10,36 @@ class EncrypterStub {
   }
 }
 
+class CreateUserRepositoryStub implements CreateUserRepository {
+  async createOne(dataUser: UserRequestData): Promise<UserResponseData> {
+    const fakeUser = {
+      id: 'any_id',
+      email: 'any_email@email.com',
+      name: 'My Any Name',
+      password: 'hashed_password',
+    };
+
+    return new Promise((resolve) => resolve(fakeUser));
+  }
+}
+
 interface factoriesTypes {
   dbCreateUser: CreateUser;
   encrypterStub: EncrypterStub;
+  createUserRepositoryStub: CreateUserRepositoryStub;
 }
 
 const factories = (): factoriesTypes => {
   const encrypterStub = new EncrypterStub();
+
+  const createUserRepositoryStub = new CreateUserRepositoryStub();
   
-  const dbCreateUser = new DbCreateUser(encrypterStub);
+  const dbCreateUser = new DbCreateUser(encrypterStub, createUserRepositoryStub);
 
   return {
     dbCreateUser,
     encrypterStub,
+    createUserRepositoryStub,
   };
 };
 
@@ -52,5 +71,23 @@ describe('database createUser usecase', () => {
     });
 
     await expect(promise).rejects.toThrow(new Error('any_error'));
+  });
+
+  test('Should call createUserRepository with correct data', async () => {
+    const { dbCreateUser, createUserRepositoryStub } = factories();
+
+    const createUserRepositoryStubSpy = jest.spyOn(createUserRepositoryStub, 'createOne');
+
+    await dbCreateUser.createOne({
+      email: 'any_email@email.com',
+      name: 'My Any Name',
+      password: 'any_password',
+    });
+
+    expect(createUserRepositoryStubSpy).toHaveBeenCalledWith({
+      email: 'any_email@email.com',
+      name: 'My Any Name',
+      password: 'hashed_password',
+    });
   });
 });
