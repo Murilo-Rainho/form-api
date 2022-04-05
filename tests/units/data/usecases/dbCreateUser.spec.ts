@@ -105,4 +105,21 @@ describe('database createUser usecase', () => {
 
     await expect(promise).rejects.toThrow(new Error('any_error'));
   });
+
+  test('Should return a created user with "id", "email", "name" and "password"', async () => {
+    const { dbCreateUser } = factories();
+
+    const createdUser = await dbCreateUser.createOne({
+      email: 'any_email@email.com',
+      name: 'My Any Name',
+      password: 'any_password',
+    });
+
+    expect(createdUser).toEqual({
+      id: 'any_id',
+      email: 'any_email@email.com',
+      name: 'My Any Name',
+      password: 'hashed_password',
+    });
+  });
 });
