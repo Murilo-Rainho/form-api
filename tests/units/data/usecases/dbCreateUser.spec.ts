@@ -90,4 +90,19 @@ describe('database createUser usecase', () => {
       password: 'hashed_password',
     });
   });
+
+  test('Should throw if createUserRepository throws', async () => {
+    const { dbCreateUser, createUserRepositoryStub } = factories();
+
+    jest.spyOn(createUserRepositoryStub, 'createOne')
+      .mockReturnValueOnce(new Promise((_resolve, reject) => reject(new Error('any_error'))));
+
+    const promise = dbCreateUser.createOne({
+      email: 'any_email@email.com',
+      name: 'My Any Name',
+      password: 'any_password',
+    });
+
+    await expect(promise).rejects.toThrow(new Error('any_error'));
+  });
 });
