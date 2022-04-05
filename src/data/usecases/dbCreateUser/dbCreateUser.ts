@@ -30,6 +30,6 @@ export class DbCreateUser implements CreateUser {
 
     const createdUser = await this.dbCreateUserRepository.createOne(userData);
 
-    return new Promise((resolve) => resolve(createdUser));
+    return createdUser;
   }
 }
