@@ -10,6 +10,7 @@ jest.mock('bcrypt', () => ({
 
 interface FactoriesTypes {
   bcryptAdapter: BcryptAdapter;
+  salt: number;
 }
 
 const factories = (): FactoriesTypes => {
@@ -18,18 +19,19 @@ const factories = (): FactoriesTypes => {
 
   return {
     bcryptAdapter,
+    salt,
   };
 }
 
 describe('BcryptAdapter', () => {
   test('Should call bcrypt with correct data', async () => {
-    const { bcryptAdapter } = factories();
+    const { bcryptAdapter, salt } = factories();
 
     const hashSpy = jest.spyOn(bcrypt, 'hash');
 
     await bcryptAdapter.encrypt('any_value');
 
-    expect(hashSpy).toHaveBeenLastCalledWith('any_value', 12);
+    expect(hashSpy).toHaveBeenLastCalledWith('any_value', salt);
   });
 
   test('Should return a hash on success', async () => {
