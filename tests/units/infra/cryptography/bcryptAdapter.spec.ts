@@ -41,4 +41,16 @@ describe('BcryptAdapter', () => {
 
     expect(hash).toBe('value_hashed');
   });
+
+  test('Should throw if bcrypt throws', async () => {
+    const { bcryptAdapter } = factories();
+
+    jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => (
+      new Promise((_resolve, reject) => reject(new Error('any_error')))
+    ));
+
+    const promise = bcryptAdapter.encrypt('any_value');
+
+    await expect(promise).rejects.toThrow(new Error('any_error'));
+  });
 });
