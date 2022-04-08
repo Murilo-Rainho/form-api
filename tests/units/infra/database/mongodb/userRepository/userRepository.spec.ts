@@ -27,6 +27,11 @@ describe('mongodb\'s userRepository', () => {
     await mongoHelper.disconnect();
   });
 
+  beforeEach(async () => {
+    const userCollection = mongoHelper.getCollection('users');
+    await userCollection.deleteMany({});
+  });
+
   test('Should return an user on success', async () => {
     const { userRepository } = factories();
 
