@@ -4,6 +4,8 @@ import { mongoHelper } from '../../../../../../src/infra/database/mongodb/helper
 
 import { UserRepository } from '../../../../../../src/infra/database/mongodb/userRepository';
 
+import { env } from '../../../../../../src/main/config';
+
 config();
 
 interface FactoriesTypes {
@@ -20,7 +22,7 @@ const factories = (): FactoriesTypes => {
 
 describe('mongodb\'s userRepository', () => {
   beforeAll(async () => {
-    await mongoHelper.connect();
+    await mongoHelper.connect(env.mongoUrl);
   });
 
   afterAll(async () => {

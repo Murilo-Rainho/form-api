@@ -1,5 +1,11 @@
-import { app as server } from './config';
+import { app as server, env } from './config';
 
-server.listen(4001, () => {
-  console.log('server listen at port 4001');
-});
+import { mongoHelper } from '../infra/database/mongodb/helper';
+
+mongoHelper.connect(env.mongoUrl)
+  .then(() => {
+    server.listen(env.port, () => {
+      console.log(`server listen at port ${env.port}`);
+    });
+  })
+  .catch((error) => console.log(error.message));

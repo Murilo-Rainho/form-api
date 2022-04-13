@@ -2,11 +2,11 @@ import request from 'supertest';
 
 import { mongoHelper } from '../../../../src/infra/database/mongodb/helper';
 
-import { app } from '../../../../src/main/config';
+import { app, env } from '../../../../src/main/config';
 
 describe('Sign Up Routes', () => {
   beforeAll(async () => {
-    await mongoHelper.connect();
+    await mongoHelper.connect(env.mongoUrl);
   });
 
   afterAll(async () => {
