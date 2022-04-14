@@ -6,10 +6,12 @@ export default (app: Express): void => {
 
   app.use('/api', router);
 
-  fastGlob.sync('**/src/main/routes/**Routes.ts')
-    .map(async (filePath) => {
-      const route = (await import(`../../../${filePath}`)).default;
-
-      return route(router);
+  fastGlob.sync('**/src/main/routes/index.ts')
+    .forEach(async (filePath) => {
+      const routeObj = await import(`../../../${filePath}`);
+      const routeArray = Object.values(routeObj);
+      routeArray.forEach((route: (r: Router) => void) => {
+        route(router);
+      });
     });
 };
