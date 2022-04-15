@@ -6,12 +6,8 @@ export const mongoHelper = {
   mongoUrl: null as string,
   async connect(mongoUrl: string): Promise<void> {
     this.mongoUrl = mongoUrl;
-    try {
-      this.client = await MongoClient.connect(mongoUrl);
-      this.isConnected = true;
-    } catch (error) {
-      console.log(error);
-    }
+    this.client = await MongoClient.connect(mongoUrl);
+    this.isConnected = true;
   },
   async disconnect(): Promise<void> {
     await this.client.close();
@@ -20,11 +16,7 @@ export const mongoHelper = {
   },
   async getCollection(name: string): Promise<Collection> {
     if (!this.isConnected) {
-      try {
-        await this.connect(this.mongoUrl);
-      } catch (error) {
-        console.log(error);
-      }
+      await this.connect(this.mongoUrl);
     }
     return this.client.db().collection(name);
   },
