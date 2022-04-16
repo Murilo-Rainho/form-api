@@ -1,7 +1,8 @@
-import { CreateUserRepository } from '../../../../data/protocols';
-
-import { UserResponseData } from '../../../../domain/models';
-import { UserRequestData } from '../../../../domain/usecases';
+import {
+  CreateUserRepository,
+  UserResponseData,
+  UserRequestData,
+} from './userRepositoryProtocols';
 
 import { mongoHelper } from '../helper';
 

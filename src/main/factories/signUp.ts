@@ -1,8 +1,10 @@
-import { SignUpController } from '../../presentation/controllers/signUp';
-import { EmailValidatorAdapter } from '../../utils';
-import { DbCreateUser } from '../../data/usecases/dbCreateUser';
-import { BcryptAdapter } from '../../infra/cryptography';
-import { UserRepository } from '../../infra/database/mongodb/userRepository';
+import {
+  SignUpController,
+  EmailValidatorAdapter,
+  DbCreateUser,
+  BcryptAdapter,
+  UserRepository,
+} from './signUpProtocols';
 
 export const makeSignUpController = (): SignUpController => {
   const salt = 12;

@@ -4,8 +4,6 @@ import { EmailValidator } from '../../../src/presentation/controllers/signUp/sig
 
 import { EmailValidatorAdapter } from '../../../src/utils';
 
-// it is not our task to test an external library, because of that,
-// we will mock the return of it.
 jest.mock('validator', () => ({
   isEmail(): boolean {
     return true;
