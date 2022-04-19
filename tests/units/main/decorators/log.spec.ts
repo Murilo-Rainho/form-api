@@ -5,7 +5,7 @@ class ControllerStub implements Controller {
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     const httpResponse: HttpResponse = {
       body: {
-        ...httpRequest
+        ...httpRequest.body
       },
       statusCode: 200,
     };
@@ -45,5 +45,21 @@ describe('LogController Decorator', () => {
 
     await logControllerDecorator.handle(httpRequest);
     expect(spyControllerStub).toHaveBeenCalledWith(httpRequest)
+  });
+
+  test('Should return controller handle response', async () => {
+    const { logControllerDecorator } = factories();
+
+    const httpRequest = {
+      body: {
+        email: 'any_email@email.com',
+        name: 'My Any Name',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    const httpResponse = await logControllerDecorator.handle(httpRequest);
+    expect(httpResponse).toEqual({ statusCode: 200, body: { ...httpRequest.body } })
   });
 });
