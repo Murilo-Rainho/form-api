@@ -43,7 +43,7 @@ export class SignUpController implements Controller {
 
       return successRequest(dataUser);
     } catch (error) {
-      return internalError();
+      return internalError(error);
     }
   }
 }

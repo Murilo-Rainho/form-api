@@ -68,8 +68,10 @@ describe('LogController Decorator', () => {
 
   test('Should log error if controller handle statusCode response was \'500\'', async () => {
     const { logControllerDecorator, controllerStub } = factories();
+    const error = new Error('any_error');
+    error.stack = 'any_stack';
 
-    jest.spyOn(controllerStub, 'handle').mockImplementationOnce(() => new Promise((resolve) => resolve(internalError())));
+    jest.spyOn(controllerStub, 'handle').mockImplementationOnce(() => new Promise((resolve) => resolve(internalError(error))));
     const spyConsoleLog = jest.spyOn(console, 'log');
 
     const httpRequest = {
@@ -82,6 +84,6 @@ describe('LogController Decorator', () => {
     };
 
     await logControllerDecorator.handle(httpRequest);
-    expect(spyConsoleLog).toHaveBeenCalledWith(new ServerError());
+    expect(spyConsoleLog).toHaveBeenCalledWith(new ServerError(error.stack));
   });
 });

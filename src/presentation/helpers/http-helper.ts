@@ -7,9 +7,9 @@ export const badRequest = (error: Error): HttpResponse => ({
   body: error,
 });
 
-export const internalError = (): HttpResponse => ({
+export const internalError = (error: Error): HttpResponse => ({
   statusCode: 500,
-  body: new ServerError(),
+  body: new ServerError(error.stack),
 });
 
 export const successRequest = (data: any): HttpResponse => ({

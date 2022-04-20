@@ -51,6 +51,8 @@ const factories = (): FactoriesTypes => {
 };
 
 describe('Signup Controller', () => {
+  const error = new Error('Any internal error');
+
   it('Should return 400 if no name is provided', async () => {
     const { signUpController } = factories();
 
@@ -180,7 +182,7 @@ describe('Signup Controller', () => {
   it('Should return 500 if has an internal error in \'emailValidator\'', async () => {
     const { signUpController, emailValidatorStub } = factories();
 
-    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => { throw new Error('Any internal error') });
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => { throw error });
 
     const httpRequest = {
       body: {
@@ -194,14 +196,14 @@ describe('Signup Controller', () => {
     const httpResponse = await signUpController.handle(httpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toEqual(new ServerError(error.stack));
   });
 
   it('Should return 500 if has an internal error in \'createUser\'', async () => {
     const { signUpController, createUserStub } = factories();
 
     jest.spyOn(createUserStub, 'createOne').mockImplementationOnce(async () => {
-      return new Promise((_resolve, reject) => reject(new Error('Any internal error')));
+      return new Promise((_resolve, reject) => reject(error));
     });
 
     const httpRequest = {
@@ -216,7 +218,7 @@ describe('Signup Controller', () => {
     const httpResponse = await signUpController.handle(httpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse.body).toEqual(new ServerError(error.stack));
   });
 
   it('Should call addAccount with correct values', async () => {
