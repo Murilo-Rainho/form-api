@@ -86,4 +86,24 @@ describe('LogController Decorator', () => {
     await logControllerDecorator.handle(httpRequest);
     expect(spyConsoleLog).toHaveBeenCalledWith(new ServerError(error.stack));
   });
+
+  test('Should log error if controller handle throws', async () => {
+    const { logControllerDecorator, controllerStub } = factories();
+    const error = new Error('any_error');
+
+    jest.spyOn(controllerStub, 'handle').mockImplementationOnce(() => { throw error });
+    const spyConsoleLog = jest.spyOn(console, 'log');
+
+    const httpRequest = {
+      body: {
+        email: 'any_email@email.com',
+        name: 'My Any Name',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    await logControllerDecorator.handle(httpRequest);
+    expect(spyConsoleLog).toHaveBeenCalledWith(error);
+  });
 });
