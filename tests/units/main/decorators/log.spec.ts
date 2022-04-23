@@ -1,8 +1,11 @@
-import { LogControllerDecorator } from "../../../../src/main/decorators";
-
-import { ServerError } from "../../../../src/presentation/errors";
-import { internalError } from "../../../../src/presentation/helpers";
-import { Controller, HttpRequest, HttpResponse } from "../../../../src/presentation/protocols";
+import {
+  LogControllerDecorator,
+  ServerError,
+  internalError,
+  Controller,
+  HttpRequest,
+  HttpResponse,
+} from './logSpecProtocols';
 
 class ControllerStub implements Controller {
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
