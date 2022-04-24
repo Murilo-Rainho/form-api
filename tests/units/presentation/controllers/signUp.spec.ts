@@ -1,14 +1,13 @@
-import { UserResponseData } from '../../../../src/domain/models';
-import { CreateUser, UserRequestData } from '../../../../src/domain/usecases';
-
-import { EmailValidator } from '../../../../src/presentation/controllers/signUp/signUpProtocols';
-import { SignUpController } from '../../../../src/presentation/controllers/signUp'
 import {
+  UserResponseData,
+  CreateUser,
+  UserRequestData,
+  EmailValidator,
+  SignUpController,
   MissingParamError,
   InvalidParamError,
   ServerError,
-} from '../../../../src/presentation/errors';
-
+} from './signUpProtocols';
 
 class EmailValidatorStub implements EmailValidator {
   isValid(_email: string): boolean {
