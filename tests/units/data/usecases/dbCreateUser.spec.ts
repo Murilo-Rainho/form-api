@@ -1,8 +1,10 @@
-import { CreateUserRepository } from '../../../../src/data/protocols';
-import { DbCreateUser } from '../../../../src/data/usecases/dbCreateUser';
-
-import { UserResponseData } from '../../../../src/domain/models';
-import { CreateUser, UserRequestData } from '../../../../src/domain/usecases';
+import {
+  CreateUserRepository,
+  DbCreateUser,
+  UserResponseData,
+  CreateUser,
+  UserRequestData,
+} from './dbCreateUserProtocols';
 
 class EncrypterStub {
   async encrypt(_password: string): Promise<string> {
