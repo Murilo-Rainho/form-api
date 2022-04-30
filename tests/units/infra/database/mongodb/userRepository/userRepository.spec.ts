@@ -1,10 +1,9 @@
-import { config } from 'dotenv';
-
-import { mongoHelper } from '../../../../../../src/infra/database/mongodb/helper';
-
-import { UserRepository } from '../../../../../../src/infra/database/mongodb/userRepository';
-
-import { env } from '../../../../../../src/main/config';
+import {
+  config,
+  mongoHelper,
+  UserRepository,
+  env,
+} from './userRepositoryProtocols';
 
 config();
 
