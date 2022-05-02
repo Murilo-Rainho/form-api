@@ -52,6 +52,15 @@ const factories = (): FactoriesTypes => {
 describe('Signup Controller', () => {
   const error = new Error('Any internal error');
 
+  const validHttpRequest = {
+    body: {
+      email: 'my_valid_email@email.com',
+      name: 'My Name',
+      password: 'my_valid_password',
+      passwordConfirmation: 'my_valid_password',
+    },
+  };
+
   it('Should return 400 if no name is provided', async () => {
     const { signUpController } = factories();
 
@@ -164,18 +173,9 @@ describe('Signup Controller', () => {
 
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
 
-    const httpRequest = {
-      body: {
-        email: 'my_invalid_email@email.com',
-        name: 'My Name',
-        password: 'super_password',
-        passwordConfirmation: 'super_password',
-      },
-    };
+    await signUpController.handle(validHttpRequest);
 
-    await signUpController.handle(httpRequest);
-
-    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
+    expect(isValidSpy).toHaveBeenCalledWith(validHttpRequest.body.email);
   });
 
   it('Should return 500 if has an internal error in \'emailValidator\'', async () => {
@@ -183,16 +183,7 @@ describe('Signup Controller', () => {
 
     jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => { throw error });
 
-    const httpRequest = {
-      body: {
-        email: 'my_invalid_email@email.com',
-        name: 'My Name',
-        password: 'super_password',
-        passwordConfirmation: 'super_password',
-      },
-    };
-
-    const httpResponse = await signUpController.handle(httpRequest);
+    const httpResponse = await signUpController.handle(validHttpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError(error.stack));
@@ -205,16 +196,7 @@ describe('Signup Controller', () => {
       return new Promise((_resolve, reject) => reject(error));
     });
 
-    const httpRequest = {
-      body: {
-        email: 'my_invalid_email@email.com',
-        name: 'My Name',
-        password: 'super_password',
-        passwordConfirmation: 'super_password',
-      },
-    };
-
-    const httpResponse = await signUpController.handle(httpRequest);
+    const httpResponse = await signUpController.handle(validHttpRequest);
 
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError(error.stack));
@@ -223,18 +205,9 @@ describe('Signup Controller', () => {
   it('Should call addAccount with correct values', async () => {
     const { signUpController, createUserStub } = factories();
 
-    jest.spyOn(createUserStub, 'createOne')
+    jest.spyOn(createUserStub, 'createOne');
 
-    const httpRequest = {
-      body: {
-        email: 'my_valid_email@email.com',
-        name: 'My Name',
-        password: 'my_valid_password',
-        passwordConfirmation: 'my_valid_password',
-      },
-    };
-
-    await signUpController.handle(httpRequest);
+    await signUpController.handle(validHttpRequest);
 
     expect(createUserStub.createOne).toHaveBeenCalledWith({
       email: 'my_valid_email@email.com',
@@ -246,15 +219,6 @@ describe('Signup Controller', () => {
   it('Should return 200 if valid data is provided', async () => {
     const { signUpController } = factories();
 
-    const httpRequest = {
-      body: {
-        email: 'my_valid_email@email.com',
-        name: 'My Name',
-        password: 'my_valid_password',
-        passwordConfirmation: 'my_valid_password',
-      },
-    };
-
     const userResponse = {
       id: 'my_valid_id',
       name: 'My Valid Name',
@@ -262,7 +226,7 @@ describe('Signup Controller', () => {
       password: 'my_valid_password',
     };
 
-    const httpResponse = await signUpController.handle(httpRequest);
+    const httpResponse = await signUpController.handle(validHttpRequest);
 
     expect(httpResponse.statusCode).toBe(200);
     expect(httpResponse.body).toEqual(userResponse);
