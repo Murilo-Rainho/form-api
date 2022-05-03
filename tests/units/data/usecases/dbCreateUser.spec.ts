@@ -46,16 +46,24 @@ const factories = (): factoriesTypes => {
 };
 
 describe('database createUser usecase', () => {
+  const userData = {
+    email: 'any_email@email.com',
+    name: 'My Any Name',
+    password: 'any_password',
+  };
+
+  const userDataWithHashedPassword = {
+    email: 'any_email@email.com',
+    name: 'My Any Name',
+    password: 'hashed_password',
+  };
+
   test('Should call encrypter with correct password', async () => {
     const { dbCreateUser, encrypterStub } = factories();
 
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt');
 
-    await dbCreateUser.createOne({
-      email: 'any_email@email.com',
-      name: 'My Any Name',
-      password: 'any_password',
-    });
+    await dbCreateUser.createOne(userData);
 
     expect(encryptSpy).toHaveBeenCalledWith('any_password');
   });
@@ -66,11 +74,7 @@ describe('database createUser usecase', () => {
     jest.spyOn(encrypterStub, 'encrypt')
       .mockReturnValueOnce(new Promise((_resolve, reject) => reject(new Error('any_error'))));
 
-    const promise = dbCreateUser.createOne({
-      email: 'any_email@email.com',
-      name: 'My Any Name',
-      password: 'any_password',
-    });
+    const promise = dbCreateUser.createOne(userData);
 
     await expect(promise).rejects.toThrow(new Error('any_error'));
   });
@@ -80,17 +84,9 @@ describe('database createUser usecase', () => {
 
     const createUserRepositoryStubSpy = jest.spyOn(createUserRepositoryStub, 'createOne');
 
-    await dbCreateUser.createOne({
-      email: 'any_email@email.com',
-      name: 'My Any Name',
-      password: 'any_password',
-    });
+    await dbCreateUser.createOne(userData);
 
-    expect(createUserRepositoryStubSpy).toHaveBeenCalledWith({
-      email: 'any_email@email.com',
-      name: 'My Any Name',
-      password: 'hashed_password',
-    });
+    expect(createUserRepositoryStubSpy).toHaveBeenCalledWith(userDataWithHashedPassword);
   });
 
   test('Should throw if createUserRepository throws', async () => {
@@ -99,11 +95,7 @@ describe('database createUser usecase', () => {
     jest.spyOn(createUserRepositoryStub, 'createOne')
       .mockReturnValueOnce(new Promise((_resolve, reject) => reject(new Error('any_error'))));
 
-    const promise = dbCreateUser.createOne({
-      email: 'any_email@email.com',
-      name: 'My Any Name',
-      password: 'any_password',
-    });
+    const promise = dbCreateUser.createOne(userData);
 
     await expect(promise).rejects.toThrow(new Error('any_error'));
   });
@@ -111,17 +103,11 @@ describe('database createUser usecase', () => {
   test('Should return a created user with "id", "email", "name" and "password"', async () => {
     const { dbCreateUser } = factories();
 
-    const createdUser = await dbCreateUser.createOne({
-      email: 'any_email@email.com',
-      name: 'My Any Name',
-      password: 'any_password',
-    });
+    const createdUser = await dbCreateUser.createOne(userData);
 
     expect(createdUser).toEqual({
       id: 'any_id',
-      email: 'any_email@email.com',
-      name: 'My Any Name',
-      password: 'hashed_password',
+      ...userDataWithHashedPassword,
     });
   });
 });
