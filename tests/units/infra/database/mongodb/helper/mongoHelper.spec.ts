@@ -1,4 +1,4 @@
-import { mongoHelper } from "../../../../../../src/infra/database/mongodb/helper";
+import { mongoHelper } from './mongoHelperProtocols';
 
 const { MONGO_URL } = process.env;
 
