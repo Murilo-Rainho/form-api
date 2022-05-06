@@ -23,6 +23,13 @@ const factories = (): FactoriesTypes => {
 };
 
 describe('Login Controller', () => {
+  const validHttpRequest = {
+    body: {
+      email: 'any_email@email.com',
+      password: 'any_password',
+    },
+  }
+
   test('Should return 400 if no email is provided', async () => {
     const { loginController } = factories();
     
@@ -53,16 +60,9 @@ describe('Login Controller', () => {
     const { loginController, emailValidatorStub } = factories();
 
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
-    
-    const httpRequest = {
-      body: {
-        email: 'any_email@email.com',
-        password: 'any_password',
-      },
-    }
 
-    await loginController.handle(httpRequest);
-    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
+    await loginController.handle(validHttpRequest);
+    expect(isValidSpy).toHaveBeenCalledWith(validHttpRequest.body.email);
   });
 
   test('Should return 400 if an invalid email is provided', async () => {
