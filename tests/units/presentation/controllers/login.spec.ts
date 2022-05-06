@@ -1,5 +1,10 @@
-import { LoginController } from '../../../../src/presentation/controllers/login';
-import { badRequest, EmailValidator, InvalidParamError, MissingParamError } from './signUpProtocols';
+import {
+  LoginController,
+  badRequest,
+  EmailValidator,
+  InvalidParamError,
+  MissingParamError,
+} from './loginProtocols';
 
 class EmailValidatorStub implements EmailValidator {
   isValid(_email: string): boolean {
