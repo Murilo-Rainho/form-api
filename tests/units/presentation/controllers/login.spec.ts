@@ -1,7 +1,11 @@
 import { LoginController } from '../../../../src/presentation/controllers/login';
 import { badRequest, MissingParamError } from './signUpProtocols';
 
-const factories = () => {
+interface FactoriesTypes {
+  loginController: LoginController;
+}
+
+const factories = (): FactoriesTypes => {
   const loginController = new LoginController();
   return {
     loginController,
