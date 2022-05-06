@@ -1,5 +1,5 @@
 import { LoginController } from '../../../../src/presentation/controllers/login';
-import { badRequest, EmailValidator, MissingParamError } from './signUpProtocols';
+import { badRequest, EmailValidator, InvalidParamError, MissingParamError } from './signUpProtocols';
 
 class EmailValidatorStub implements EmailValidator {
   isValid(_email: string): boolean {
@@ -63,5 +63,21 @@ describe('Login Controller', () => {
 
     await loginController.handle(httpRequest);
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
+  });
+
+  test('Should return 400 if an invalid email is provided', async () => {
+    const { loginController, emailValidatorStub } = factories();
+
+    jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false);
+    
+    const httpRequest = {
+      body: {
+        email: 'invalid_email@email.com',
+        password: 'any_password',
+      },
+    }
+
+    const httpResponse = await loginController.handle(httpRequest);
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')));
   });
 });
