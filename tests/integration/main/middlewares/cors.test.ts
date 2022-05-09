@@ -1,6 +1,9 @@
-import { Request, Response } from 'express';
 import request from 'supertest';
-import { app } from '../../../../src/main/config';
+import {
+  Request,
+  Response,
+  app,
+} from './corsProtocols';
 
 describe('Cors Middleware', () => {
   test('Should enable CORS', async () => {
