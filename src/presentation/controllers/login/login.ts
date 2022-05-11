@@ -6,6 +6,7 @@ import {
   HttpRequest,
   HttpResponse,
   EmailValidator,
+  internalError,
 } from './loginProtocols';
 
 export class LoginController implements Controller {
@@ -16,18 +17,22 @@ export class LoginController implements Controller {
   }
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
-    const requiredFields = ['email', 'password'];
+    try {
+      const requiredFields = ['email', 'password'];
 
-    for (const field of requiredFields) {
-      if (!httpRequest.body[field]) return badRequest(new MissingParamError(field));
-    }
+      for (const field of requiredFields) {
+        if (!httpRequest.body[field]) return badRequest(new MissingParamError(field));
+      }
 
-    const { body: { email } } = httpRequest;
+      const { body: { email } } = httpRequest;
 
-    const isValid = this.emailValidator.isValid(email);
+      const isValid = this.emailValidator.isValid(email);
 
-    if (!isValid) {
-      return new Promise((resolve) => resolve(badRequest(new InvalidParamError('email'))));
+      if (!isValid) {
+        return badRequest(new InvalidParamError('email'));
+      }
+    } catch (error) {
+      return new Promise((resolve) => resolve(internalError(error)));
     }
   }
 }
