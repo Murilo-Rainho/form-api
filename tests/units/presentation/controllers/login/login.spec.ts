@@ -4,6 +4,7 @@ import {
   EmailValidator,
   InvalidParamError,
   MissingParamError,
+  internalError,
 } from './loginProtocols';
 
 class EmailValidatorStub implements EmailValidator {
@@ -28,6 +29,8 @@ const factories = (): FactoriesTypes => {
 };
 
 describe('Login Controller', () => {
+  const error = new Error('Any internal error');
+
   const validHttpRequest = {
     body: {
       email: 'any_email@email.com',
@@ -61,15 +64,6 @@ describe('Login Controller', () => {
     expect(httpResponse).toEqual(badRequest(new MissingParamError('password')));
   });
 
-  test('Should call EmailValidator with correct email', async () => {
-    const { loginController, emailValidatorStub } = factories();
-
-    const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
-
-    await loginController.handle(validHttpRequest);
-    expect(isValidSpy).toHaveBeenCalledWith(validHttpRequest.body.email);
-  });
-
   test('Should return 400 if an invalid email is provided', async () => {
     const { loginController, emailValidatorStub } = factories();
 
@@ -84,5 +78,23 @@ describe('Login Controller', () => {
 
     const httpResponse = await loginController.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')));
+  });
+
+  test('Should call EmailValidator with correct email', async () => {
+    const { loginController, emailValidatorStub } = factories();
+
+    const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid');
+
+    await loginController.handle(validHttpRequest);
+    expect(isValidSpy).toHaveBeenCalledWith(validHttpRequest.body.email);
+  });
+
+  test('Should return 500 if EmailValidator throws', async () => {
+    const { loginController, emailValidatorStub } = factories();
+
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => { throw error });
+
+    const httpResponse = await loginController.handle(validHttpRequest);
+    expect(httpResponse).toEqual(internalError(error));
   });
 });
