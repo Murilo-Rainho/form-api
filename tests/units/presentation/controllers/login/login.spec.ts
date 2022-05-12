@@ -7,6 +7,7 @@ import {
   internalError,
   Authentication,
   unauthorized,
+  successRequest,
 } from './loginProtocols';
 
 class EmailValidatorStub implements EmailValidator {
@@ -19,7 +20,7 @@ class EmailValidatorStub implements EmailValidator {
 class AuthenticationStub implements Authentication {
   auth(_email: string, _password: string): Promise<string> {
     // In all tests, the email will be valid
-    return new Promise((resolve) => resolve('token'));
+    return new Promise((resolve) => resolve('any_token'));
   }
 }
 
@@ -135,5 +136,12 @@ describe('Login Controller', () => {
 
     const httpResponse = await loginController.handle(validHttpRequest);
     expect(httpResponse).toEqual(internalError(error));
+  });
+
+  test('Should call Authentication with correct value', async () => {
+    const { loginController } = factories();
+
+    const httpResponse = await loginController.handle(validHttpRequest);
+    expect(httpResponse).toEqual(successRequest({ accessToken: 'any_token' }));
   });
 });
