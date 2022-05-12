@@ -5,6 +5,7 @@ import {
   InvalidParamError,
   MissingParamError,
   internalError,
+  Authentication,
 } from './loginProtocols';
 
 class EmailValidatorStub implements EmailValidator {
@@ -14,17 +15,27 @@ class EmailValidatorStub implements EmailValidator {
   }
 }
 
+class AuthenticationStub implements Authentication {
+  auth(_email: string, _password: string): Promise<string> {
+    // In all tests, the email will be valid
+    return new Promise((resolve) => resolve('token'));
+  }
+}
+
 interface FactoriesTypes {
   loginController: LoginController;
   emailValidatorStub: EmailValidator;
+  authenticationStub: AuthenticationStub;
 }
 
 const factories = (): FactoriesTypes => {
   const emailValidatorStub = new EmailValidatorStub();
-  const loginController = new LoginController(emailValidatorStub);
+  const authenticationStub = new AuthenticationStub();
+  const loginController = new LoginController(emailValidatorStub, authenticationStub);
   return {
     loginController,
     emailValidatorStub,
+    authenticationStub,
   };
 };
 
@@ -96,5 +107,14 @@ describe('Login Controller', () => {
 
     const httpResponse = await loginController.handle(validHttpRequest);
     expect(httpResponse).toEqual(internalError(error));
+  });
+
+  test('Should call Authentication with correct value', async () => {
+    const { loginController, authenticationStub } = factories();
+
+    const authSpy = jest.spyOn(authenticationStub, 'auth');
+
+    await loginController.handle(validHttpRequest);
+    expect(authSpy).toHaveBeenCalledWith(validHttpRequest.body.email, validHttpRequest.body.password);
   });
 });
