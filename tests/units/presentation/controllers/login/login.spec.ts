@@ -6,6 +6,7 @@ import {
   MissingParamError,
   internalError,
   Authentication,
+  unauthorized,
 } from './loginProtocols';
 
 class EmailValidatorStub implements EmailValidator {
@@ -116,5 +117,14 @@ describe('Login Controller', () => {
 
     await loginController.handle(validHttpRequest);
     expect(authSpy).toHaveBeenCalledWith(validHttpRequest.body.email, validHttpRequest.body.password);
+  });
+
+  test('Should return 401 if invalid credentials are provided', async () => {
+    const { loginController, authenticationStub } = factories();
+
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise((resolve) => resolve(null)));
+
+    const httpResponse = await loginController.handle(validHttpRequest);
+    expect(httpResponse).toEqual(unauthorized());
   });
 });
