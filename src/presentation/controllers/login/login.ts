@@ -7,13 +7,17 @@ import {
   HttpResponse,
   EmailValidator,
   internalError,
+  Authentication,
 } from './loginProtocols';
 
 export class LoginController implements Controller {
   private readonly emailValidator: EmailValidator;
 
-  constructor(emailValidator: EmailValidator) {
+  private readonly authentication: Authentication;
+
+  constructor(emailValidator: EmailValidator, authentication: Authentication) {
     this.emailValidator = emailValidator;
+    this.authentication = authentication;
   }
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -24,15 +28,17 @@ export class LoginController implements Controller {
         if (!httpRequest.body[field]) return badRequest(new MissingParamError(field));
       }
 
-      const { body: { email } } = httpRequest;
+      const { body: { email, password } } = httpRequest;
 
       const isValid = this.emailValidator.isValid(email);
 
       if (!isValid) {
         return badRequest(new InvalidParamError('email'));
       }
+
+      await this.authentication.auth(email, password);
     } catch (error) {
-      return new Promise((resolve) => resolve(internalError(error)));
+      return internalError(error);
     }
   }
 }
