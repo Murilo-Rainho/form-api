@@ -7,6 +7,7 @@ import {
   MissingParamError,
   InvalidParamError,
   ServerError,
+  Validation,
 } from './signUpProtocols';
 
 class EmailValidatorStub implements EmailValidator {
@@ -29,10 +30,17 @@ class CreateUserStub implements CreateUser {
   }
 }
 
+class ValidationStub implements Validation {
+  validate(_input: any): Error {
+    return null
+  }
+}
+
 interface FactoriesTypes {
   signUpController: SignUpController;
   emailValidatorStub: EmailValidator;
   createUserStub: CreateUser;
+  validationStub: ValidationStub;
 }
 
 const factories = (): FactoriesTypes => {
@@ -40,12 +48,15 @@ const factories = (): FactoriesTypes => {
 
   const createUserStub = new CreateUserStub();
 
-  const signUpController = new SignUpController(emailValidatorStub, createUserStub);
+  const validationStub = new ValidationStub();
+
+  const signUpController = new SignUpController(emailValidatorStub, createUserStub, validationStub);
 
   return {
     signUpController,
     createUserStub,
     emailValidatorStub,
+    validationStub,
   };
 };
 
@@ -230,5 +241,15 @@ describe('Signup Controller', () => {
 
     expect(httpResponse.statusCode).toBe(200);
     expect(httpResponse.body).toEqual(userResponse);
+  });
+
+  it('Should call Validation with correct values', async () => {
+    const { signUpController, validationStub } = factories();
+
+    const createOneSpy = jest.spyOn(validationStub, 'validate');
+
+    await signUpController.handle(validHttpRequest);
+
+    expect(createOneSpy).toHaveBeenCalledWith(validHttpRequest.body);
   });
 });
