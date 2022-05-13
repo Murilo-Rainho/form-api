@@ -205,11 +205,11 @@ describe('Signup Controller', () => {
   it('Should call addAccount with correct values', async () => {
     const { signUpController, createUserStub } = factories();
 
-    jest.spyOn(createUserStub, 'createOne');
+    const createOneSpy = jest.spyOn(createUserStub, 'createOne');
 
     await signUpController.handle(validHttpRequest);
 
-    expect(createUserStub.createOne).toHaveBeenCalledWith({
+    expect(createOneSpy).toHaveBeenCalledWith({
       email: 'my_valid_email@email.com',
       name: 'My Name',
       password: 'my_valid_password',
