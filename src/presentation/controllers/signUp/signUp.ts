@@ -9,6 +9,7 @@ import {
   badRequest,
   InvalidParamError,
   MissingParamError,
+  Validation,
 } from './signUpProtocols';
 
 export class SignUpController implements Controller {
@@ -16,13 +17,17 @@ export class SignUpController implements Controller {
 
   private readonly createUser: CreateUser;
 
-  constructor(emailValidator: EmailValidator, createUser: CreateUser) {
+  private readonly validation: Validation;
+
+  constructor(emailValidator: EmailValidator, createUser: CreateUser, validation: Validation) {
     this.emailValidator = emailValidator;
     this.createUser = createUser;
+    this.validation = validation;
   }
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      this.validation.validate(httpRequest.body);
       const requiredFields = ['email', 'name', 'password', 'passwordConfirmation'];
 
       for (const field of requiredFields) {

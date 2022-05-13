@@ -4,3 +4,4 @@ export * from '../../../domain/models';
 export * from '../../../domain/usecases';
 export * from '../../helpers';
 export * from '../../errors';
+export * from '../../helpers/validators';
