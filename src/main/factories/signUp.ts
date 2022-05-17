@@ -1,4 +1,3 @@
-import { Controller } from '../../presentation/protocols';
 import {
   SignUpController,
   EmailValidatorAdapter,
@@ -6,7 +5,9 @@ import {
   BcryptAdapter,
   UserRepository,
   LogControllerDecorator,
+  Controller,
 } from './signUpProtocols';
+import { makeSignUpValidation } from './signUpValidation';
 
 export const makeSignUpController = (): Controller => {
   const salt = 12;
@@ -15,7 +16,11 @@ export const makeSignUpController = (): Controller => {
 
   const emailValidatorAdapter = new EmailValidatorAdapter();
   const dbCreateUser = new DbCreateUser(bcryptAdapter, userRepository);
-  const signUpController = new SignUpController(emailValidatorAdapter, dbCreateUser);
+  const signUpController = new SignUpController(
+    emailValidatorAdapter,
+    dbCreateUser,
+    makeSignUpValidation(),
+  );
   const logControllerDecorator = new LogControllerDecorator(signUpController);
 
   return logControllerDecorator;

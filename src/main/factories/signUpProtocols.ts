@@ -1,6 +1,8 @@
-export { SignUpController } from '../../presentation/controllers/signUp';
-export { EmailValidatorAdapter } from '../../utils';
-export { DbCreateUser } from '../../data/usecases/dbCreateUser';
-export { BcryptAdapter } from '../../infra/cryptography';
-export { UserRepository } from '../../infra/database/mongodb/userRepository';
-export { LogControllerDecorator } from '../decorators';
+export * from '../../presentation/controllers/signUp';
+export * from '../../utils';
+export * from '../../data/usecases/dbCreateUser';
+export * from '../../infra/cryptography';
+export * from '../../infra/database/mongodb/userRepository';
+export * from '../decorators';
+export * from '../../presentation/protocols';
+export * from '../../presentation/helpers/validators';

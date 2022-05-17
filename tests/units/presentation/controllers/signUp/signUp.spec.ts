@@ -4,10 +4,10 @@ import {
   UserRequestData,
   EmailValidator,
   SignUpController,
-  MissingParamError,
   InvalidParamError,
   ServerError,
   Validation,
+  badRequest,
 } from './signUpProtocols';
 
 class EmailValidatorStub implements EmailValidator {
@@ -71,74 +71,6 @@ describe('Signup Controller', () => {
       passwordConfirmation: 'my_valid_password',
     },
   };
-
-  it('Should return 400 if no name is provided', async () => {
-    const { signUpController } = factories();
-
-    const httpRequest = {
-      body: {
-        email: 'my_valid_email@email.com',
-        password: 'super_password',
-        passwordConfirmation: 'super_password',
-      },
-    };
-
-    const httpResponse = await signUpController.handle(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('name'));
-  });
-
-  it('Should return 400 if no email is provided', async () => {
-    const { signUpController } = factories();
-
-    const httpRequest = {
-      body: {
-        name: 'My Name',
-        password: 'super_password',
-        passwordConfirmation: 'super_password',
-      },
-    };
-
-    const httpResponse = await signUpController.handle(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('email'));
-  });
-
-  it('Should return 400 if no password is provided', async () => {
-    const { signUpController } = factories();
-
-    const httpRequest = {
-      body: {
-        email: 'my_valid_email@email.com',
-        name: 'My Name',
-        passwordConfirmation: 'super_password',
-      },
-    };
-
-    const httpResponse = await signUpController.handle(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('password'));
-  });
-
-  it('Should return 400 if no password confirmation is provided', async () => {
-    const { signUpController } = factories();
-
-    const httpRequest = {
-      body: {
-        email: 'my_valid_email@email.com',
-        name: 'My Name',
-        password: 'super_password',
-      },
-    };
-
-    const httpResponse = await signUpController.handle(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('passwordConfirmation'));
-  });
 
   it('Should return 400 if password and password confirmation provided it\'s not equal', async () => {
     const { signUpController } = factories();
@@ -251,5 +183,15 @@ describe('Signup Controller', () => {
     await signUpController.handle(validHttpRequest);
 
     expect(createOneSpy).toHaveBeenCalledWith(validHttpRequest.body);
+  });
+
+  it('Should return 400 if Validation returns an error', async () => {
+    const { signUpController, validationStub } = factories();
+
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(error);
+
+    const httpResponse = await signUpController.handle(validHttpRequest);
+
+    expect(httpResponse).toEqual(badRequest(error));
   });
 });
