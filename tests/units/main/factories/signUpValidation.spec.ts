@@ -1,5 +1,9 @@
-import { makeSignUpValidation } from '../../../../src/main/factories';
-import { RequiredFieldValidation, Validation, ValidationComposite } from '../../../../src/presentation/helpers/validators';
+import {
+  makeSignUpValidation,
+  RequiredFieldValidation,
+  Validation,
+  ValidationComposite,
+} from './signUpValidationProtocols';
 
 jest.mock('../../../../src/presentation/helpers/validators/validationComposite');
 
