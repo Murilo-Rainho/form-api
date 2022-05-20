@@ -24,6 +24,8 @@ const factories = (): FactoriesTypes => {
 };
 
 describe('EmailValidatorAdapter', () => {
+  const validEmail = 'valid_email@email.com';
+
   test('Should return false if validator return false', () => {
     const { emailValidatorAdapter } = factories();
 
@@ -37,7 +39,7 @@ describe('EmailValidatorAdapter', () => {
   test('Should return true if validator return true', () => {
     const { emailValidatorAdapter } = factories();
 
-    const isValid = emailValidatorAdapter.isValid('valid_email@email.com');
+    const isValid = emailValidatorAdapter.isValid(validEmail);
 
     expect(isValid).toBe(true);
   });
@@ -47,8 +49,8 @@ describe('EmailValidatorAdapter', () => {
 
     const isEmailSpy = jest.spyOn(validator, 'isEmail');
 
-    emailValidatorAdapter.isValid('any_email@email.com');
+    emailValidatorAdapter.isValid(validEmail);
 
-    expect(isEmailSpy).toHaveBeenCalledWith('any_email@email.com');
+    expect(isEmailSpy).toHaveBeenCalledWith(validEmail);
   });
 });
