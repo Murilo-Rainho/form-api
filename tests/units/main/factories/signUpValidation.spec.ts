@@ -1,4 +1,5 @@
 import {
+  CompareFieldsValidation,
   makeSignUpValidation,
   RequiredFieldValidation,
   Validation,
@@ -12,6 +13,7 @@ const makeValidationArray = () => {
   for (const field of ['name', 'email', 'password', 'passwordConfirmation']) {
     validations.push(new RequiredFieldValidation(field));
   }
+  validations.push(new CompareFieldsValidation('password', 'passwordConfirmation'))
   return validations;
 }
 

@@ -2,6 +2,7 @@ import {
   Validation,
   RequiredFieldValidation,
   ValidationComposite,
+  CompareFieldsValidation,
 } from './signUpProtocols';
 
 export const makeSignUpValidation = (): ValidationComposite => {
@@ -9,5 +10,6 @@ export const makeSignUpValidation = (): ValidationComposite => {
   for (const field of ['name', 'email', 'password', 'passwordConfirmation']) {
     validations.push(new RequiredFieldValidation(field));
   }
+  validations.push(new CompareFieldsValidation('password', 'passwordConfirmation'));
   return new ValidationComposite(validations);
 };

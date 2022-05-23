@@ -72,24 +72,6 @@ describe('Signup Controller', () => {
     },
   };
 
-  it('Should return 400 if password and password confirmation provided it\'s not equal', async () => {
-    const { signUpController } = factories();
-
-    const httpRequest = {
-      body: {
-        email: 'my_valid_email@email.com',
-        name: 'My Name',
-        password: 'super_password',
-        passwordConfirmation: 'invalid_password',
-      },
-    };
-
-    const httpResponse = await signUpController.handle(httpRequest);
-
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'));
-  });
-
   it('Should return 400 if an invalid email is provided', async () => {
     const { signUpController, emailValidatorStub } = factories();
 
